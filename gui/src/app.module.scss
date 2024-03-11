@@ -1,0 +1,17 @@
+@use 'styles/base.scss';
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+.app {
+  width: 100vw;
+  height: 100vh;
+
+  font-family: base.$text-font;
+  font-size: base.$text-size;
+  color: base.$text-default;
+
+  background: base.$background-default;
+}
