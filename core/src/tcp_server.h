@@ -19,6 +19,6 @@ typedef struct {
 } tcp_server;
 
 tcp_server *tcp_server_construct(const uint8_t *ipv4, int16_t port);
-void tcp_server_run(tcp_server *server, void *(*func)(void *buf));
+void tcp_server_run(tcp_server *server, void *superstruct, void *(*func)(void *superstruct, void *buf));
 
 #endif

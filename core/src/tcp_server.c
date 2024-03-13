@@ -13,7 +13,7 @@ tcp_server *tcp_server_construct(const uint8_t *ipv4, int16_t port) {
 	return result;
 }
 
-void tcp_server_run(tcp_server *server, void *(*func)(void *buf)) {
+void tcp_server_run(tcp_server *server, void *superstruct, void *(*func)(void *superstruct, void *buf)) {
 	_listen(server->socket, 16);
 	for (;;) {
 		int32_t addrl = sizeof(server->client.addr);
@@ -24,7 +24,7 @@ void tcp_server_run(tcp_server *server, void *(*func)(void *buf)) {
 			_close(server->socket);
 
 			_recv(server->client.socket, server->client.buffer, BUFSIZE, 0x0);
-			func(server->client.buffer);
+			func(superstruct, server->client.buffer);
 
 			exit(0x0);
 		} 

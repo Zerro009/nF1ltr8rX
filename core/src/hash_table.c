@@ -26,7 +26,7 @@ void *hash_table_at(hash_table *table, uint8_t *key) {
 
 	hash_table_entry *iter = table->begin;
 	for (; iter ; iter = iter->next) {
-		if (iter->key == key) {
+		if (!strcmp(iter->key, key)) {
 			return iter->value;
 		}
 		if (!iter->next) {
