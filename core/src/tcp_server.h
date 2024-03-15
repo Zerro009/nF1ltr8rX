@@ -1,6 +1,8 @@
 #ifndef __TCP_SERVER_H__
 #define __TCP_SERVER_H__
 
+#include <string.h>
+
 #include "memory.h"
 #include "socket.h"
 

@@ -1,9 +1,17 @@
 #include "http_server.h"
-#include "hash_table.h"
-#include "view.h"
 
-void hello() {
-	printf("Hello, world!\n");
+http_response *hello(http_request *req) {
+	hash_table *headers = hash_table_construct();
+	hash_table_push(
+		headers,
+		"Content-Type",
+		"application/json"
+	);
+	hash_table *body = hash_table_construct();
+
+	http_response *response = http_response_construct("200", headers, body);
+
+	return response;
 }
 
 int main() {
@@ -16,6 +24,6 @@ int main() {
 		v
 	);
 
-	http_server *server = http_server_construct("0.0.0.0", 8002, router);
+	http_server *server = http_server_construct("0.0.0.0", 8000, router);
 	http_server_run(server);
 }

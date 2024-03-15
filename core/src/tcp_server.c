@@ -24,7 +24,8 @@ void tcp_server_run(tcp_server *server, void *superstruct, void *(*func)(void *s
 			_close(server->socket);
 
 			_recv(server->client.socket, server->client.buffer, BUFSIZE, 0x0);
-			func(superstruct, server->client.buffer);
+			void *result = func(superstruct, server->client.buffer);
+			_send(server->client.socket, result, strlen(result), 0x0);
 
 			exit(0x0);
 		} 

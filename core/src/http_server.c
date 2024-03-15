@@ -18,7 +18,9 @@ void *http_server_handle_request(void *superstruct, void *request) {
 	// Checking if uri is present in server's router
 	view *viewset = hash_table_at(server->router, req->uri);
 	if (viewset) {
-		viewset->func();
+		http_response *res = viewset->func(req);
+		void *result = http_response_to_raw(res);
+		return result;
 	}
 	// If not, return 404
 }
