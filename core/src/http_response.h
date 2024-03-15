@@ -15,6 +15,9 @@ typedef struct {
 } http_response;
 
 http_response *http_response_construct(const uint8_t *status, hash_table *headers, hash_table *body);
+int32_t http_response_calc_total_bytes(http_response *response);
+int32_t http_response_calc_content_length(http_response *response);
+void http_response_add_content_length_header(http_response *response, int32_t length);
 void *http_response_to_raw(http_response *response);
 
 #endif

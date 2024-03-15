@@ -8,7 +8,11 @@ http_response *hello(http_request *req) {
 		"application/json"
 	);
 	hash_table *body = hash_table_construct();
-
+	hash_table_push(
+		body,
+		"22",
+		"open"
+	);
 	http_response *response = http_response_construct("200", headers, body);
 
 	return response;

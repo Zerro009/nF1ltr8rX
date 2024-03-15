@@ -19,5 +19,4 @@ void *http_server_handle_request(void *superstruct, void *request);
 
 // Middleware to handle incoming request
 
-
 #endif
