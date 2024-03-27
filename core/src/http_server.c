@@ -15,10 +15,17 @@ void http_server_run(http_server *server) {
 void *http_server_handle_request(void *superstruct, void *request) {
 	http_request *req = http_request_construct(request);
 	http_server *server = (http_server*) superstruct;
+
+	// Pre-handling by middleware
+	middleware_handle_request(req);
+
 	// Checking if uri is present in server's router
 	view *viewset = hash_table_at(server->router, req->uri);
 	if (viewset) {
 		http_response *res = viewset->func(req);
+
+		printf("[%s]\n", res->status);
+
 		void *result = http_response_to_raw(res);
 		return result;
 	}

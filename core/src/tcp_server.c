@@ -16,6 +16,11 @@ tcp_server *tcp_server_construct(const uint8_t *ipv4, int16_t port) {
 void tcp_server_run(tcp_server *server, void *superstruct, void *(*func)(void *superstruct, void *buf)) {
 	_listen(server->socket, 16);
 	for (;;) {
+		if (signal(SIGINT, sigintHandler) == SIG_ERR) {
+			_close(server->socket);
+			_close(server->client.socket);
+		}
+
 		int32_t addrl = sizeof(server->client.addr);
 		server->client.socket = _accept(server->socket, &server->client.addr, &addrl);
 
@@ -35,4 +40,9 @@ void tcp_server_run(tcp_server *server, void *superstruct, void *(*func)(void *s
 			pid = wait4(-1, NULL, WNOHANG, NULL);
 		} while (pid > 0x0);
 	}
+}
+
+static void sigintHandler(int32_t sigint) {
+	printf("\nReceving SIGINT! Server is stopping gracefully...\n");
+	exit(1);
 }

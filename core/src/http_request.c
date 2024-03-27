@@ -33,8 +33,6 @@ http_request *http_request_construct(void *buffer) {
 		}
 	}
 
-	printf("!!!\n");
-
 	// Headers section
 	result->headers = hash_table_construct();
 	return result;

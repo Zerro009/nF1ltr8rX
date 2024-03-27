@@ -1,6 +1,7 @@
 #ifndef __TCP_SERVER_H__
 #define __TCP_SERVER_H__
 
+#include <signal.h>
 #include <string.h>
 
 #include "memory.h"
@@ -22,5 +23,8 @@ typedef struct {
 
 tcp_server *tcp_server_construct(const uint8_t *ipv4, int16_t port);
 void tcp_server_run(tcp_server *server, void *superstruct, void *(*func)(void *superstruct, void *buf));
+
+// Handle SIGINT
+static void sigintHandler(int32_t sigint);
 
 #endif

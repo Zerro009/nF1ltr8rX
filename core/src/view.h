@@ -4,6 +4,8 @@
 #include "http_request.h"
 #include "http_response.h"
 
+#include "scanner.h"
+
 typedef struct {
 	uint8_t method[METHOD_MAX_SIZE];
 	http_response *(*func)(http_request*);

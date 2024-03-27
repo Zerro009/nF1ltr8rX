@@ -4,6 +4,7 @@
 #include "tcp_server.h"
 #include "http_request.h"
 #include "http_response.h"
+#include "middleware.h"
 #include "view.h"
 
 typedef struct {

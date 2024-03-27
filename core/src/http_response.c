@@ -110,7 +110,5 @@ void *http_response_to_raw(http_response *response) {
 	}
 	strcat(result, "}");
 
-	printf("%s\n", result);
-
 	return result;
 }

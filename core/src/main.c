@@ -1,33 +1,21 @@
 #include "http_server.h"
 
-http_response *hello(http_request *req) {
+http_response *x(http_request *request) {
+	hash_table *body = tcp_scan_host("192.168.199.1", 1, 100);
 	hash_table *headers = hash_table_construct();
-	hash_table_push(
-		headers,
-		"Content-Type",
-		"application/json"
-	);
-	hash_table *body = hash_table_construct();
-	hash_table_push(
-		body,
-		"22",
-		"open"
-	);
-	http_response *response = http_response_construct("200", headers, body);
 
-	return response;
+	return http_response_construct("200", headers, body);
 }
 
 int main() {
-	view *v = view_construct("GET", hello);
-
 	hash_table *router = hash_table_construct();
+
 	hash_table_push(
 		router,
-		"/",
-		v
+		"/scanner/tcp/",
+		view_construct("GET", x)
 	);
 
-	http_server *server = http_server_construct("0.0.0.0", 8000, router);
+	http_server *server = http_server_construct("0.0.0.0", 8001, router);
 	http_server_run(server);
 }
