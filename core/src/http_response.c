@@ -77,6 +77,7 @@ void *http_response_to_raw(http_response *response) {
 
 	int32_t bytes = http_response_calc_total_bytes(response);
 	uint8_t *result = (uint8_t*) _malloc(sizeof(uint8_t) * bytes);
+	memset(result, 0x0, sizeof(uint8_t) * bytes);
 
 	// Starting line
 	strcat(result, response->version);

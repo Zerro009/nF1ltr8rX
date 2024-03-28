@@ -27,6 +27,7 @@ void *http_server_handle_request(void *superstruct, void *request) {
 		printf("[%s]\n", res->status);
 
 		void *result = http_response_to_raw(res);
+
 		return result;
 	}
 	// If not, return 404
