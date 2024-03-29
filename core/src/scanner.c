@@ -61,14 +61,7 @@ int32_t icmp_ping(const uint8_t *host) {
 	time_t start, current;
 	time(&start);
 
-	do {
-		time(&current);
-		int32_t bytes = icmp_recv(sockfd, pkt, &addr);
-		if (bytes > 0x0) {
-			printf("\n%d\n bytes received!\n", bytes);
-			break;
-		}
-	} while (current - start <= PING_TIMEOUT);
+	icmp_recv(sockfd, pkt, &addr);
 
 	return bytes_sent;
 }

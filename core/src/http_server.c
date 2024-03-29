@@ -23,11 +23,16 @@ void *http_server_handle_request(void *superstruct, void *request) {
 	view *viewset = hash_table_at(server->router, req->uri);
 	if (viewset) {
 		http_response *res = viewset->func(req);
+		// Set 'Access-Control-Allow-Origin' header
+		hash_table_push(
+			res->headers,
+			"Access-Control-Allow-Origin",
+			"*"
+		);
 
 		printf("[%s]\n", res->status);
 
 		void *result = http_response_to_raw(res);
-
 		return result;
 	}
 	// If not, return 404

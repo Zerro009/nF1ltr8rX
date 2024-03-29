@@ -7,16 +7,8 @@ http_response *x(http_request *request) {
 	return http_response_construct("200", headers, body);
 }
 
-http_response *ppp(http_request *request) {
-	hash_table *body = hash_table_construct();
-	hash_table *headers = hash_table_construct();
-
-	int32_t result = icmp_ping("192.168.199.1");
-
-	return http_response_construct("200", headers, body);
-}
-
 int main() {
+	// Check for root privileges
 	if (geteuid() != 0x0) {
 		fprintf(stderr, "Some funcs require root privileges!\n");
 	}
@@ -27,12 +19,6 @@ int main() {
 		router,
 		"/scanner/tcp/",
 		view_construct("GET", x)
-	);
-
-	hash_table_push(
-		router,
-		"/ping/",
-		view_construct("GET", ppp)
 	);
 
 	http_server *server = http_server_construct("0.0.0.0", 8000, router);

@@ -7,7 +7,7 @@
 #include "memory.h"
 #include "socket.h"
 
-#define BUFSIZE 2048
+#define BUFSIZE 4096
 
 typedef struct {
 	int32_t socket;
