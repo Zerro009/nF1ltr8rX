@@ -1,5 +1,66 @@
 #include "scanner.h"
 
+// Service fingerprint
+hash_table *ssh_fingerprint(int32_t sockfd) {
+	hash_table *result = hash_table_construct();
+
+	uint8_t payload[] = "SSH-2.0-OpenSSH_7.6p1\r\n";
+	if (_send(sockfd, payload, sizeof(payload), 0x0) < 0x0) {
+		return NULL;
+	}
+
+	uint8_t buf[64];
+	int32_t received = _recv(sockfd, buf, sizeof(buf), 0x0);
+
+	printf("%s\n", buf);
+
+	uint8_t *service = (uint8_t*)_malloc(sizeof(uint8_t) * received);
+	strncpy(service, buf, received);
+	if (strstr(service, "\r\n")) {
+		*strstr(service, "\r\n") = 0x0;
+	}
+	service[received] = 0x0;
+
+	hash_table_push(
+		result,
+		"22",
+		service
+	);
+
+	return result;
+}
+
+hash_table *http_fingerprint(int32_t sockfd) {
+	hash_table *result = hash_table_construct();
+
+	uint8_t request[] = "GET / HTTP/1.0\r\n\r\n";
+	if (_send(sockfd, request, sizeof(request), 0x0) < 0x0) {
+		return NULL;
+	}
+
+	uint8_t buf[1024];
+	int32_t received = _recv(sockfd, buf, sizeof(buf), 0x0);
+
+	if (strstr(buf, "Server:")) {
+		uint8_t *server = strstr(buf, "Server:");
+		server = strchr(server, ' ') + 1;
+		uint8_t *del = strstr(server, "\r\n");
+		uint8_t *service = (uint8_t*)_malloc(sizeof(uint8_t) * (del - server));
+		strncpy(service, server, del - server);
+		service[del - server] = 0x0;
+
+		hash_table_push(
+			result,
+			"80",
+			service
+		);
+
+	}
+
+	return result;
+}
+// __--__--__--__--__
+
 unsigned short icmp_checksum(void *buf, int len) {
 	unsigned short *bbuf = buf;
 	unsigned int sum = 0;
@@ -55,7 +116,7 @@ void send_ping(int icmp_sock, struct sockaddr_in *dest_addr) {
 }
 
 int32_t icmp_ping(const uint8_t *host) {
-	int icmp_sock = _socket(AF_INET, SOCK_RAW, IPPROTO_ICMP);
+	int32_t icmp_sock = _socket(AF_INET, SOCK_RAW, IPPROTO_ICMP);
 
 	struct sockaddr_in dest_addr;
 	bzero(&dest_addr, sizeof(dest_addr));
@@ -76,7 +137,7 @@ int32_t icmp_ping(const uint8_t *host) {
 
 	int32_t bytes;
 	if (bytes = recvfrom(icmp_sock, recv_msg, sizeof(recv_msg), 0, (struct sockaddr*)&recv_addr, &addr_len) > 0) {
-       		char *recv_ip = inet_ntoa(recv_addr.sin_addr);
+       		uint8_t *recv_ip = inet_ntoa(recv_addr.sin_addr);
         	if (strcmp(recv_ip, host) == 0x0) {
 			_close(icmp_sock);
 			return 0x1;
@@ -88,6 +149,7 @@ int32_t icmp_ping(const uint8_t *host) {
 	return 0x0;
 }
 
+// Port scan
 hash_table *tcp_scan_host(const uint8_t *host, uint16_t from, uint16_t to) {
 	hash_table *result = hash_table_construct();
 
@@ -120,4 +182,24 @@ hash_table *tcp_scan_host(const uint8_t *host, uint16_t from, uint16_t to) {
 	}
 
 	return result;
+}
+
+hash_table *tcp_scan_detail_port(const uint8_t *host, uint16_t port) {
+	int32_t sockfd = _socket(AF_INET, SOCK_STREAM, 0x0);
+
+	struct sockaddr_in addr;
+	addr.sin_family = AF_INET;
+	addr.sin_port = htons(port);
+	addr.sin_addr.s_addr = inet_addr(host);
+
+
+	if (_connect(sockfd, (struct sockaddr*)&addr, sizeof(addr)) < 0x0) {
+		return NULL;
+	}
+
+	if (port == 22) {
+		return ssh_fingerprint(sockfd);
+	} if (port == 80) {
+		return http_fingerprint(sockfd);
+	}
 }

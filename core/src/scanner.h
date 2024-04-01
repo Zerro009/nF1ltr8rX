@@ -3,10 +3,13 @@
 
 #include <stdint.h>
 #include <time.h>
+#include <netdb.h>
 
 #include "memory.h"
 #include "socket.h"
 #include "hash_table.h"
+
+#include "http_response.h"
 
 #define ICMP_PKT_S 64
 
@@ -20,8 +23,6 @@ int32_t icmp_ping(const uint8_t *host);
 
 // Port scan
 hash_table *tcp_scan_host(const uint8_t *host, uint16_t from, uint16_t to);
-
-// Fingerprinting
-
+hash_table *tcp_scan_detail_port(const uint8_t *host, uint16_t port);
 
 #endif

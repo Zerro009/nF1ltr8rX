@@ -33,10 +33,20 @@ http_response *p(http_request *request) {
 	}
 }	
 
+http_response *d(http_request *request) {
+	uint8_t *host = hash_table_at(request->params, "host");
+	uint16_t port = atoi(hash_table_at(request->params, "port"));
+
+	hash_table *body = tcp_scan_detail_port(host, port);
+
+	return http_response_construct("200", NULL, body);
+}
+
 int main() {
 	// Check for root privileges
 	if (geteuid() != 0x0) {
-		fprintf(stderr, "Some funcs require root privileges!\n");
+		fprintf(stderr, "This app functionality requires root access!\n");
+		exit(1);
 	}
 
 	hash_table *router = hash_table_construct();
@@ -50,8 +60,14 @@ int main() {
 
 	hash_table_push(
 		router,
-		"/ping/",
+		"/scanner/ping/",
 		view_construct("GET", p)
+	);
+
+	hash_table_push(
+		router,
+		"/scanner/tcp/detail/",
+		view_construct("GET", d)
 	);
 
 	http_server *server = http_server_construct("0.0.0.0", 8000, router);

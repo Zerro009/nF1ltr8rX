@@ -10,6 +10,7 @@
 #include <sys/socket.h>
 #include <sys/wait.h>
 #include <netinet/ip_icmp.h>
+#include <netinet/tcp.h>
 #include <netinet/ip.h>
 
 #include <unistd.h>

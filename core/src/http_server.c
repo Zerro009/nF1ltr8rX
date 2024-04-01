@@ -29,11 +29,21 @@ void *http_server_handle_request(void *superstruct, void *request) {
 			"Access-Control-Allow-Origin",
 			"*"
 		);
+		hash_table_push(
+			res->headers,
+			"Server",
+			"nF1ltr8rx v0.0.1"
+		);
 
-		printf("[%s]\n", res->status);
+		middleware_print_response_status(res);
 
 		void *result = http_response_to_raw(res);
 		return result;
 	}
 	// If not, return 404
+	http_response *not_found = http_response_construct("404", NULL, NULL);
+
+	middleware_print_response_status(not_found);
+
+	return http_response_to_raw(not_found);
 }
